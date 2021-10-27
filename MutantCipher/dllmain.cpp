@@ -1,10 +1,12 @@
+#define _CRT_SECURE_NO_WARNINGS
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include "pch.h"
 #include <stdio.h>
 #include <stdint.h>
 #include "context_cipher.h"
+extern "C" {
 #include "md5.h"
-
+}
 struct Cipher* cipher_data;
 
 //Tamaño para representar decimalmente 2^32 posiciones: 10 digitos. Key size es un int (4bytes). (2^64 = 16 trillones (18 ceros), 24 bits para concat)
@@ -33,7 +35,7 @@ DWORD print_hex(char* buf_name, void* buf, int size) {
         //   (size*3)			 - 3 characters for every byte (2 hex characters plus 1 space). Space changed for '\n' every 32 bytes
         //   (size/8 - size/32)	 - Every 8 bytes another space is added after the space (if it is not multiple of 32, which already has '\n' instead)
         //   (1)				 - A '\n' is added at the end
-        full_str = calloc((size * 3) + (size / 8 - size / 32) + (1), sizeof(char));
+        full_str = static_cast <char*> (calloc((size * 3) + (size / 8 - size / 32) + (1), sizeof(char)));
         if (full_str == NULL) {
             return ERROR_NOT_ENOUGH_MEMORY;
         }
