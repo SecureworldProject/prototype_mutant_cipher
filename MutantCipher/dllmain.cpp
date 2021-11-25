@@ -81,11 +81,13 @@ int cipher(LPVOID out_buf, LPCVOID in_buf, DWORD size, size_t offset, struct Key
     for (int i = offset; i < pos_max; i++) {
         snprintf(concat, CONCAT_TAM, "%d%s", i, key->data);// Ahora mismo no hace padding con 0s
         result = md5String(concat);
-        for (int j = 0; j < 16; j++) { 
+       /* for (int j = 0; j < 16; j++) { 
             total += result[j];
         }
-        total = (((int*)in_buf)[i] + total) % 256;
-        ((char*)out_buf)[i] = (byte)total;
+        total = (((int*)in_buf)[i] + total) % 256;*/
+        total = result[15];
+        //((char*)out_buf)[i] = (byte)total;
+        ((byte*)out_buf)[i] = (byte)total;
         free(result);
     }
     return 0;
@@ -101,11 +103,13 @@ int decipher(LPVOID out_buf, LPCVOID in_buf, DWORD size, size_t offset, struct K
     for (int i = offset; i < pos_max; i++) {
         snprintf(concat, CONCAT_TAM, "%d%s", i, key->data);// Ahora mismo no hace padding con 0s
         result = md5String(concat);
-        for (int j = 0; j < 16; j++) {
+        /*for (int j = 0; j < 16; j++) {
             total += result[j];
         }
-        total = (((int*)in_buf)[i] + total) % 256;
-        ((char*)out_buf)[i] = (byte)total;
+        total = (((int*)in_buf)[i] + total) % 256;*/
+        total = result[15];
+        //((char*)out_buf)[i] = (byte)total;
+        ((byte*)out_buf)[i] = (byte)total;
         free(result);
     }
     return 0;
