@@ -72,12 +72,14 @@ int init(struct Cipher* cipher_data_param) {
 }
 
 int cipher(LPVOID out_buf, LPCVOID in_buf, DWORD size, size_t offset, struct KeyData* key) {
+    printf("Bienvenido al cifrador\n");
     printf("Ciphering (%ws)\n", cipher_data->file_name);
     byte* result;
     char concat[CONCAT_TAM];
     int total = 0;
     DWORD pos_max = size + offset;
     
+    printf("A continuacion se cifra todo el buffer\n");
     for (int i = offset; i < pos_max; i++) {
         snprintf(concat, CONCAT_TAM, "%d%s", i, key->data);// Ahora mismo no hace padding con 0s
         result = md5String(concat);
@@ -90,6 +92,7 @@ int cipher(LPVOID out_buf, LPCVOID in_buf, DWORD size, size_t offset, struct Key
         ((byte*)out_buf)[i] = (byte)total;
         free(result);
     }
+    printf("Cifrado terminado");
     return 0;
 }
 
