@@ -76,18 +76,24 @@ int cipher(LPVOID out_buf, LPCVOID in_buf, DWORD size, size_t offset, struct Key
     printf("Ciphering (%ws)\n", cipher_data->file_name);
     byte* result;
     char concat[CONCAT_TAM];
-    int total = 0;
+    //int total = 0;
+    byte total;
     //DWORD pos_max = size + offset;
     
     printf("A continuacion se cifra todo el buffer\n");
+    byte my_key = 0;
+    for (size_t i = 0; i < key->size; i++) {
+        my_key += key->data[i];
+    }
     for (int i = 0; i < size; i++) {
-        snprintf(concat, CONCAT_TAM, "%d%s", i+offset, key->data);// Ahora mismo no hace padding con 0s
+        snprintf(concat, CONCAT_TAM, "%d%s", i+offset, my_key);// Ahora mismo no hace padding con 0s
         result = md5String(concat);
        /* for (int j = 0; j < 16; j++) { 
             total += result[j];
         }*/
         total = result[15];
-        total = (((int*)in_buf)[i] + total) % 256;
+        //total = (((int*)in_buf)[i] + total) % 256;
+        total = (((byte*)in_buf)[i] + total);
         //((char*)out_buf)[i] = (byte)total;
         ((byte*)out_buf)[i] = (byte)total;
         free(result);
