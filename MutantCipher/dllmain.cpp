@@ -72,7 +72,7 @@ int init(struct Cipher* cipher_data_param) {
 }
 int cipher(LPVOID out_buf, LPCVOID in_buf, DWORD size, size_t offset, struct KeyData* key) { //offset es la posicion en el fichero, hacerlo bien que es la posicion que tengo que cifrar
     printf("Ciphering (%ws)\n", cipher_data->file_name);
-    byte* result;
+    byte result;
     char concat[CONCAT_TAM];
     /*byte my_key = 0;
     for (size_t i = 0; i < key->size; i++) {
@@ -80,9 +80,9 @@ int cipher(LPVOID out_buf, LPCVOID in_buf, DWORD size, size_t offset, struct Key
     }*/
     for (int i = 0; i < size; i++) {
         snprintf(concat, CONCAT_TAM, "%d%s", i + offset, key->data);// Ahora mismo no hace padding con 0s
-        result = md5String(concat);
-        ((byte*)out_buf)[i] = (((byte*)in_buf)[i] + result[15]);
-        free(result);
+        //result[15] = md5String(concat)[15];
+        ((byte*)out_buf)[i] = (((byte*)in_buf)[i] + md5String(concat)[15]);
+        //free(result);
     }
     printf("Buffer ciphered");
     return 0;
