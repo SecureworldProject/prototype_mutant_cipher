@@ -155,7 +155,7 @@ int decipher(LPVOID out_buf, LPCVOID in_buf, DWORD size, size_t offset, struct K
         ((byte*)out_buf)[i] = (byte)total;
         free(result);
     }*/
-    printf("Buffer ciphered");
+    printf("Buffer deciphered");
     return 0;
 }
 
