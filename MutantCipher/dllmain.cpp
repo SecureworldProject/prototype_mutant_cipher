@@ -70,8 +70,25 @@ int init(struct Cipher* cipher_data_param) {
 
     return 0;
 }
-
 int cipher(LPVOID out_buf, LPCVOID in_buf, DWORD size, size_t offset, struct KeyData* key) { //offset es la posicion en el fichero, hacerlo bien que es la posicion que tengo que cifrar
+    printf("Ciphering (%ws)\n", cipher_data->file_name);
+    byte* result;
+    char concat[CONCAT_TAM];
+    /*byte my_key = 0;
+    for (size_t i = 0; i < key->size; i++) {
+        my_key += key->data[i];
+    }*/
+    for (int i = 0; i < size; i++) {
+        snprintf(concat, CONCAT_TAM, "%d%s", i + offset, key->data);// Ahora mismo no hace padding con 0s
+        result = md5String(concat);
+        ((byte*)out_buf)[i] = (((byte*)in_buf)[i] + result[15]);
+        free(result);
+    }
+    printf("Buffer ciphered");
+    return 0;
+}
+
+int cipher_old(LPVOID out_buf, LPCVOID in_buf, DWORD size, size_t offset, struct KeyData* key) { //offset es la posicion en el fichero, hacerlo bien que es la posicion que tengo que cifrar
     printf("Bienvenido al cifrador\n");
     printf("Ciphering (%ws)\n", cipher_data->file_name);
     byte* result;
@@ -81,21 +98,22 @@ int cipher(LPVOID out_buf, LPCVOID in_buf, DWORD size, size_t offset, struct Key
     //DWORD pos_max = size + offset;
     
     printf("A continuacion se cifra todo el buffer\n");
-    byte my_key = 0;
+    /*byte my_key = 0;
     for (size_t i = 0; i < key->size; i++) {
         my_key += key->data[i];
-    }
+    }*/
     for (int i = 0; i < size; i++) {
-        snprintf(concat, CONCAT_TAM, "%d%s", i+offset, my_key);// Ahora mismo no hace padding con 0s
+        snprintf(concat, CONCAT_TAM, "%d%s", i+offset, key->data);// Ahora mismo no hace padding con 0s
         result = md5String(concat);
        /* for (int j = 0; j < 16; j++) { 
             total += result[j];
         }*/
         total = result[15];
         //total = (((int*)in_buf)[i] + total) % 256;
-        total = (((byte*)in_buf)[i] + total);
+        //total = (((byte*)in_buf)[i] + total);
         //((char*)out_buf)[i] = (byte)total;
-        ((byte*)out_buf)[i] = (byte)total;
+        //((byte*)out_buf)[i] = (byte)total;
+        ((byte*)out_buf)[i] = (((byte*)in_buf)[i] + total);
         free(result);
     }
     printf("Cifrado terminado");
