@@ -78,10 +78,12 @@ int cipher(LPVOID out_buf, LPCVOID in_buf, DWORD size, size_t offset, struct Key
     for (size_t i = 0; i < key->size; i++) {
         my_key += key->data[i];
     }*/
-    for (int i = 0; i < size; i++) {
+    for (size_t i = 0; i < size; i++) {
         snprintf(concat, CONCAT_TAM, "%d%s", i + offset, key->data);// Ahora mismo no hace padding con 0s
-        //result[15] = md5String(concat)[15];
-        ((byte*)out_buf)[i] = (((byte*)in_buf)[i] + md5String(concat)[15]);
+        //printf("Concat = %s\n",concat);
+        result = md5String(concat)[15];
+        //printf("Result: %d",result);
+        ((byte*)out_buf)[i] = (((byte*)in_buf)[i]+result);
         //free(result);
     }
     printf("Buffer ciphered");
@@ -122,7 +124,21 @@ int cipher_old(LPVOID out_buf, LPCVOID in_buf, DWORD size, size_t offset, struct
 
 int decipher(LPVOID out_buf, LPCVOID in_buf, DWORD size, size_t offset, struct KeyData* key) {
     printf("Deciphering (%ws)\n", cipher_data->file_name);
-    byte* result;
+    byte result;
+    char concat[CONCAT_TAM];
+    /*byte my_key = 0;
+    for (size_t i = 0; i < key->size; i++) {
+        my_key += key->data[i];
+    }*/
+    for (size_t i = 0; i < size; i++) {
+        snprintf(concat, CONCAT_TAM, "%d%s", i + offset, key->data);// Ahora mismo no hace padding con 0s
+        //printf("Concat = %s\n",concat);
+        result = md5String(concat)[15];
+        //printf("Result: %d",result);
+        ((byte*)out_buf)[i] = (((byte*)in_buf)[i] - result);
+        //free(result);
+    }
+    /*byte* result;
     char concat[CONCAT_TAM];
     int total = 0;
 
@@ -132,13 +148,14 @@ int decipher(LPVOID out_buf, LPCVOID in_buf, DWORD size, size_t offset, struct K
         /*for (int j = 0; j < 16; j++) {
             total += result[j];
         }*/
-        total = result[15];
+        /*total = result[15];
         total = (((int*)in_buf)[i] + total) % 256;
         
         //((char*)out_buf)[i] = (byte)total;
         ((byte*)out_buf)[i] = (byte)total;
         free(result);
-    }
+    }*/
+    printf("Buffer ciphered");
     return 0;
 }
 
